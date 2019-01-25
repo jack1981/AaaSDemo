@@ -65,15 +65,21 @@ https://store.docker.com/editions/community/docker-ce-desktop-windows
 
 # Create a standalone Keras environment with python and backend ready 
 At Module 2, we are going to learn Keras 
-## Get docker image 
+## Get docker image for Keras
 - create a folder at your laptop (such as C:\AaasDemo)
 ```sh
 $ cd C:\AaaSDemo\
 $ docker pull ufoym/deepo:keras-py27-cpu
 $ docker run -it ufoym/deepo:keras-py27-cpu bash
 ```
+### Get docker image for Keras with Juniper (optional)
+```sh
+$ cd C:\AaaSDemo\
+$ docker pull ufoym/deepo:all-py27-jupyter-cpu
+$ docker run -it -p 8888:8888  --ipc=host ufoym/deepo:all-py27-jupyter-cpu jupyter notebook --no-browser --ip=[host-ip] --allow-root --NotebookApp.token="demo" --notebook-dir='/root'
+```
 **Note! don't close window or exit the shell , then the container will be terminated , if you want to quit the container and want to attach it back , you should Ctrl+p then Ctrl+q to leave container safely**
-## We will go though this Keras python example , you can find it under /Py folder
+## We will go though this Keras python example at Juptyer notebook , you can find it under /Python folder
 - mnist_cnn.py
 
 
@@ -129,7 +135,7 @@ root@demo:/opt/work# nohup /opt/work/start-notebook.sh >/dev/null 2>&1 &
 ```
 - You can view the notebook on http://[host-ip]:12345  the token is "demo"
 
-## At Module 2 and Code Lab 1, We will go though this Keras on spark example , you can find it under /Py folder
+## At Module 2 and Code Lab 1, We will go though this Keras on spark example , you can find it under /Python folder
 - Ncf_Zoo.py
 
 # Build the benchmark artifacts
@@ -162,7 +168,7 @@ root@demo:/home/AaaSDemo/data# mv offerList.csv /opt/work/data
 root@demo:/home/AaaSDemo/data# cd ..
 root@demo:/home/AaaSDemo# mv target/aaas-demo-1.0-SNAPSHOT.jar aaas-demo.jar
 root@demo:/home/AaaSDemo# cp /opt/work/analytics-zoo-0.4.0-SNAPSHOT/lib/analytics-zoo-bigdl_0.6.0-spark_2.3.1-0.4.0-SNAPSHOT-jar-with-dependencies.jar zoo.jar
-root@demo:/home/AaaSDemo# cp docker/*.jar .
+root@demo:/home/AaaSDemo# cp jars/*.jar .
 root@demo:/home/AaaSDemo# cp scripts/*.sh .
 root@demo:/home/AaaSDemo# chmod 777 *
 ```
