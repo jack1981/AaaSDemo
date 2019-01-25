@@ -160,7 +160,7 @@ root@demo:/home/AaaSDemo/data# mv offerList.csv /opt/work/data
 
 ```sh
 root@demo:/home/AaaSDemo/data# cd ..
-root@demo:/home/AaaSDemo# mv target/aaas-demo-1.0-SNAPSHOT.jar AaaSDemo.jar
+root@demo:/home/AaaSDemo# mv target/aaas-demo-1.0-SNAPSHOT.jar aaas-demo.jar
 root@demo:/home/AaaSDemo# cp /opt/work/analytics-zoo-0.4.0-SNAPSHOT/lib/analytics-zoo-bigdl_0.6.0-spark_2.3.1-0.4.0-SNAPSHOT-jar-with-dependencies.jar zoo.jar
 root@demo:/home/AaaSDemo# cp docker/*.jar .
 root@demo:/home/AaaSDemo# cp scripts/*.sh .
@@ -366,7 +366,7 @@ $ root@70a349c84edd:/# cd /opt/kafka_2.11-0.10.1.0/bin
 $ root@70a349c84edd:/# export KAFKA=[host-ip]:9092
 $ root@70a349c84edd:/# export ZOOKEEPER=[host-ip]:2181
 $ root@70a349c84edd:/opt/kafka_2.11-0.10.1.0/bin# ./kafka-console-producer.sh --broker-list $KAFKA --topic test
-$ root@70a349c84edd:/opt/kafka_2.11-0.10.1.0/bin# ./kafka-console-consumer.sh --zookeeper $ZOOKEEPER --topic test
+$ root@70a349c84edd:/opt/kafka_2.11-0.10.1.0/bin# ./kafka-console-consumer.sh --zookeeper $ZOOKEEPER --topic test --from-beginning
 ```
 ## Start a Spark Streaming job
 ### add the kafkaStreamParams with your [host-ip]
