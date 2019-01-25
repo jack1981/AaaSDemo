@@ -79,7 +79,9 @@ $ docker pull ufoym/deepo:all-py27-jupyter-cpu
 $ docker run -it -p 8888:8888  --ipc=host ufoym/deepo:all-py27-jupyter-cpu jupyter notebook --no-browser --ip=[host-ip] --allow-root --NotebookApp.token="demo" --notebook-dir='/root'
 ```
 **Note! don't close window or exit the shell , then the container will be terminated , if you want to quit the container and want to attach it back , you should Ctrl+p then Ctrl+q to leave container safely**
-## We will go though this Keras python example at Juptyer notebook , you can find it under /Python folder
+
+## Keras python examaple 
+We will go though this Keras python example at Juptyer notebook , you can find it under /Python folder
 - mnist_cnn.py
 
 
@@ -103,11 +105,11 @@ Module 2 and Code Lab 1 require another standalone spark/python envrionment to r
    The project uses real credit transactions from public data source (https://catalog.data.gov/dataset/purchase-card-pcard-fiscal-year-2014).
    
 ## Build a docker image(don't connect VPN or http proxy) 
-- Download all the files from https://github.com/jack1981/AaaSDemo/blob/master/docker/ and put them in the local folder (such as C:\AaaSDemo\)
+- Download the images.zip file from https://github.com/jack1981/AaaSDemo/blob/master/docker/images.zip and put it in the local folder (such as C:\AaaSDemo\) then unzip it
 - then put those files under that folder
 
 ```sh
-$ cd C:\AaaSDemo\
+$ cd C:\AaaSDemo\images
 $ docker build -f demo.df -t demo .
 $ docker images
 ```
@@ -135,7 +137,8 @@ root@demo:/opt/work# nohup /opt/work/start-notebook.sh >/dev/null 2>&1 &
 ```
 - You can view the notebook on http://[host-ip]:12345  the token is "demo"
 
-## At Module 2 and Code Lab 1, We will go though this Keras on spark example , you can find it under /Python folder
+## Keras on Spark examaple
+At Module 2 and Code Lab 1, We will go though this Keras on spark example , you can find it under /Python folder
 - Ncf_Zoo.py
 
 # Build the benchmark artifacts

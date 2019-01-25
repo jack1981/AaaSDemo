@@ -3,7 +3,7 @@ rm -r /opt/work/check/
 spark-submit \
 --deploy-mode client \
 --class com.ssqcyy.aaas.demo.pipeline.StreamingPipeline \
---jars zoo.jar,kafka_2.11-0.10.2.1.jar,kafka-clients-0.10.0.1.jar,spark-sql-kafka-0-10_2.11-2.3.1.jar \
+--jars zoo.jar,kafka_2.11-0.10.2.1.jar,kafka-clients-0.10.0.1.jar,spark-sql-kafka-0-10_2.11-2.3.2.jar \
 --executor-memory 2G \
 --driver-memory 1g \
 --conf spark.dynamicAllocation.enabled=false \
