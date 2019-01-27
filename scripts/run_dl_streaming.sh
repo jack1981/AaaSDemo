@@ -16,4 +16,4 @@ spark-submit \
 --conf spark.yarn.maxAppAttempts=4 \
 --conf spark.serializer=org.apache.spark.serializer.JavaSerializer \
 aaas-demo.jar \
---kafkaStreamParams "localhost:9092,StreamingRaw,localhost:9092,StreamingResult,/opt/work/check/,5"
+--kafkaStreamParams "${hostIP}:9092,StreamingRaw,${hostIP}:9092,StreamingResult,/opt/work/check/,5"

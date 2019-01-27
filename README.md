@@ -86,7 +86,7 @@ We will go though this Keras python example at Juptyer notebook , you can find i
 
 
 # Create a standalone Keras on Spark environment with python and analytic-zoo lib ready 
-Module 2 and Code Lab 1 require another standalone spark/python envrionment to run Keras on Spark jobs
+Module 2 and Code Lab 1 require another standalone spark/python environment to run Keras on Spark jobs
 ## Benchmark Tools and environments
 ### Spark ML
   The project uses Spark Mlib (https://spark.apache.org/mllib/) as machine learning library and Apache Spark is the run time container to run machine learning job and the programming language will be Scala
@@ -105,9 +105,21 @@ Module 2 and Code Lab 1 require another standalone spark/python envrionment to r
    The project uses real credit transactions from public data source (https://catalog.data.gov/dataset/purchase-card-pcard-fiscal-year-2014).
    
 ## Build a docker image(don't connect VPN or http proxy) 
-- Download the images.zip file from https://github.com/jack1981/AaaSDemo/blob/master/docker/images.zip and put it in the local folder (such as C:\AaaSDemo\) then unzip it
-- then put those files under that folder
-
+- Download the images.zip file and put it in the local folder (such as C:\AaaSDemo\) then unzip it
+- If you are running docker at Windows 
+```sh
+$ cd C:\AaaSDemo
+$ Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+$ Invoke-WebRequest "https://github.com/jack1981/AaaSDemo/raw/master/docker/images.zip" -OutFile "C:\Docker\images.zip" -UseBasicParsing
+$ unzip images.zip
+```
+- If you are running docker at Linux 
+```sh
+$ cd /home/AaaSDemo
+$ wget https://github.com/jack1981/AaaSDemo/raw/master/docker/images.zip
+$ unzip images.zip -UseBasicParsing
+```
+- build the docker images
 ```sh
 $ cd C:\AaaSDemo\images
 $ docker build -f demo.df -t demo .
@@ -120,7 +132,8 @@ $ docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 demo                latest              738a5dd0e550        36 hours ago        4.4GB
 ```
-## start a container instance from a shell windows 
+## start a container instance from a shell windows
+- If you are running at Windows , then you need to set up the $env:COMPOSE_CONVERT_WINDOWS_PATHS=1, if not , you don't need to run that commandd
 ```sh
 $ $env:COMPOSE_CONVERT_WINDOWS_PATHS=1
 $ docker run -it -p 8080:8080 -p 8443:8443 -p 10000:10000 -p 8998:8998 -p 12345:12345 -p 8088:8088 -p 4040:4040 -p 7077:7077 -e NotebookPort=12345 -e NotebookToken="demo" -e RUNTIME_DRIVER_CORES_ENV=1 -e RUNTIME_DRIVER_MEMORY=2g -e RUNTIME_EXECUTOR_CORES=1 -e RUNTIME_EXECUTOR_MEMORY=4g -e RUNTIME_TOTAL_EXECUTOR_CORES=1 --name demo -h demo demo:latest bash
@@ -130,12 +143,32 @@ $ docker run -it -p 8080:8080 -p 8443:8443 -p 10000:10000 -p 8998:8998 -p 12345:
 ```sh
 $ docker exec -it demo /bin/bash
 ```
+## set up hostIP environment
+- if you are running docker container at Linux , then you should set up hostIP to the IPV4 IP address.
+- if you running docker container at Windows , please remember the hostIP should be configured to to DockerNAT IPV4 Address, at below example , the host-ip is 10.0.75.1
+```sh
+$ C:\Users\jacks> ipconfig
+
+Windows IP Configuration
+
+Ethernet adapter vEthernet (DockerNAT):
+
+   Connection-specific DNS Suffix  . :
+   Link-local IPv6 Address . . . . . : fe80::415f:67c7:bb51:6e11%11
+   IPv4 Address. . . . . . . . . . . : 10.0.75.1
+   Subnet Mask . . . . . . . . . . . : 255.255.255.0
+   Default Gateway . . . . . . . . . :
+```
+- set up the host-ip env 
+```sh
+root@demo:/opt/work# export hostIP=10.0.75.1
+```
 
 ## start and verify notebook
 ```sh
 root@demo:/opt/work# nohup /opt/work/start-notebook.sh >/dev/null 2>&1 & 
 ```
-- You can view the notebook on http://[host-ip]:12345  the token is "demo"
+- You can view the notebook on http://${hostIP}:12345  the token is "demo"
 
 ## Keras on Spark examaple
 At Module 2 and Code Lab 1, We will go though this Keras on spark example , you can find it under /Python folder
@@ -369,16 +402,16 @@ Zookeeper and Kafka are configured to work together out of the box
 ```
 ### Start the kafka service and Verify it
 ```sh
-$ docker run -d --name kafka -p 2181:2181 -p 9092:9092 --env ADVERTISED_HOST=[host-ip] --env ADVERTISED_PORT=9092 spotify/kafka
+$ docker run -d --name kafka -p 2181:2181 -p 9092:9092 --env ADVERTISED_HOST=${hostIP} --env ADVERTISED_PORT=9092 spotify/kafka
 $ docker exec -it kafka /bin/bash
 $ root@70a349c84edd:/# cd /opt/kafka_2.11-0.10.1.0/bin
-$ root@70a349c84edd:/# export KAFKA=[host-ip]:9092
-$ root@70a349c84edd:/# export ZOOKEEPER=[host-ip]:2181
+$ root@70a349c84edd:/# export KAFKA=${hostIP}:9092
+$ root@70a349c84edd:/# export ZOOKEEPER=${hostIP}:2181
 $ root@70a349c84edd:/opt/kafka_2.11-0.10.1.0/bin# ./kafka-console-producer.sh --broker-list $KAFKA --topic test
 $ root@70a349c84edd:/opt/kafka_2.11-0.10.1.0/bin# ./kafka-console-consumer.sh --zookeeper $ZOOKEEPER --topic test --from-beginning
 ```
 ## Start a Spark Streaming job
-### add the kafkaStreamParams with your [host-ip]
+
 ```sh
 root@driver:/home/AaaSDemo# ./run_dl_streaming.sh
 ```
