@@ -11,8 +11,8 @@ spark-submit \
 --conf spark.dynamicAllocation.enabled=false \
 --conf spark.ui.showConsoleProgress=false \
 --conf spark.yarn.max.executor.failures=4 \
---conf spark.yarn.executor.memoryOverhead=512 \
---conf spark.yarn.driver.memoryOverhead=512 \
+--conf spark.executor.memoryOverhead=512 \
+--conf spark.driver.memoryOverhead=512 \
 --conf spark.sql.tungsten.enabled=true \
 --conf spark.locality.wait=1s \
 --conf spark.yarn.maxAppAttempts=4 \
@@ -27,6 +27,6 @@ aaas-demo.jar \
 --learningRateDecay 1e-7 \
 --defaultPartition 10 \
 --dataFilePath "/opt/work/data/pcard.csv" \
---negRate 0.2 \
+--negRate 2 \
 --randomSampling true \
 --debug true

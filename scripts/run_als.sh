@@ -27,6 +27,6 @@ aaas-demo.jar \
 --maxEpoch 10 \
 --defaultPartition 10 \
 --dataFilePath "/opt/work/data/pcard.csv" \
---negRate 0.2 \
+--negRate 2 \
 --randomSampling true \
 --debug true
