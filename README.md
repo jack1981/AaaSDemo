@@ -172,7 +172,7 @@ root@demo:/opt/work# nohup /opt/work/start-notebook.sh >/dev/null 2>&1 &
 
 ## Keras on Spark examaple
 At Module 2 and Code Lab 1, We will go though this Keras on spark example , you can find it under /Python folder
-- Ncf_Zoo.py
+- keras_ncf_zoo.py
 
 # Build the benchmark artifacts
 This is for Module 4 and codelab 2
@@ -400,13 +400,13 @@ $ docker pull spotify/kafka
 2) No dependency on an external Zookeeper host, or linking to another container
 Zookeeper and Kafka are configured to work together out of the box
 ```
-### Start the kafka service and Verify it
+### Start the kafka service and Verify it ,let we say the hostIP is 10.0.75.1
 ```sh
-$ docker run -d --name kafka -p 2181:2181 -p 9092:9092 --env ADVERTISED_HOST=${hostIP} --env ADVERTISED_PORT=9092 spotify/kafka
+$ docker run -d --name kafka -p 2181:2181 -p 9092:9092 --env ADVERTISED_HOST=10.0.75.1 --env ADVERTISED_PORT=9092 spotify/kafka
 $ docker exec -it kafka /bin/bash
 $ root@70a349c84edd:/# cd /opt/kafka_2.11-0.10.1.0/bin
-$ root@70a349c84edd:/# export KAFKA=${hostIP}:9092
-$ root@70a349c84edd:/# export ZOOKEEPER=${hostIP}:2181
+$ root@70a349c84edd:/# export KAFKA=10.0.75.1:9092
+$ root@70a349c84edd:/# export ZOOKEEPER=10.0.75.1:2181
 $ root@70a349c84edd:/opt/kafka_2.11-0.10.1.0/bin# ./kafka-console-producer.sh --broker-list $KAFKA --topic test
 $ root@70a349c84edd:/opt/kafka_2.11-0.10.1.0/bin# ./kafka-console-consumer.sh --zookeeper $ZOOKEEPER --topic test --from-beginning
 ```
