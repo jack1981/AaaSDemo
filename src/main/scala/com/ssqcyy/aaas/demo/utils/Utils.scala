@@ -28,7 +28,7 @@ object Utils {
     debug:             Boolean           = true,
     saveModel:         Boolean           = true,
     randomSampling:    Boolean           = true,
-    negRate:           Double            = 0.2,
+    negRate:           Double            = 2,
     dataFilePath:      String            = "/opt/work/data/pcard.csv",
     modelFilePath:     String            = "/opt/work/",
     offerFilePath:     String            = "/opt/work/data/offerList.csv",

@@ -22,10 +22,10 @@ m_limit = 200
 sliding_length = 3
 train_start = '201702'
 train_end = '201710'
-neg_rate = 5
+neg_rate = 2
 num_features = 3
-u_output = 10
-m_output = 10
+u_output = 200
+m_output = 100
 
 sparkConf = init_spark_conf()
 sc = init_nncontext(sparkConf)
@@ -152,7 +152,7 @@ if __name__ == "__main__":
     classifier = NNClassifier(model, criterion) \
         .setBatchSize(2000) \
         .setOptimMethod(Adam(learningrate=1e-3, learningrate_decay=1e-7)) \
-        .setMaxEpoch(5)
+        .setMaxEpoch(3)
 
     nnClassifierModel = classifier.fit(trainingDF)
     predictionDF = nnClassifierModel.transform(validationDF)
