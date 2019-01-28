@@ -236,127 +236,217 @@ root@demo:/home/AaaSDemo# chmod 777 *
 ```sh
 root@driver:/home/AaaSDemo# ./run_als_default.sh
 ```
-## the result of performance metrics from Clustering+ALS
+## the major milestones and result of performance metrics from Clustering+ALS
 ```sh
-Start Kmeans trainning , training records count: 80354 numClusters is 2 numIterations is 30 runTimes is 3
+Start Kmeans trainning , training records count: 194118 numClusters is 2 numIterations is 30
 ...
-Cluster Number:2
-Cluster Centers Information Overview:
-Center Point of Cluster 0:
-[3293.748931771192,93.65055134390074,-0.10609237735334918,-0.05875482179678963]
-Center Point of Cluster 1:
-[868.5264931624264,71.3301125959403,0.05997585650067105,0.03321511847946822]
-
-Start ALS pipeline for cluster: 1
+Start ALS pipeline for cluster: 0
+Count of cluster: 0 is 1123
+Split data into Training and Validation for cluster : 0:
+cluster : 0: training records count: 36068
+cluster : 0: validation records count: 4272
 ...
-AUROC: 0.43171562581532696
-AUPRCs: 0.9065149497971297
-tp: 1405
-fp: 234
-fn: 814
-recall: 0.6331680937359171
-precision: 0.8572300183038438
-label distribution:
-+-----+-----+
-|label|count|
-+-----+-----+
-|  0.0|  304|
-|  1.0| 2219|
-+-----+-----+
+CrossValidator:54 - Best set of parameters:
+{
+        als_6c506539bd12-alpha: 0.15,
+        als_6c506539bd12-rank: 50,
+        als_6c506539bd12-regParam: 0.2
+}
+CrossValidator:54 - Best cross-validation metric: 1.824787084728743.
+...
+best rank = 50
+positiveDF count: 4272
+validationDF count: 4272
+evaluation by mid: ****************************************************************************************************
++----+--------+----+----+----+-------------------+------------------+
+|mid |posCount|tp  |fp  |fn  |recall             |precision         |
++----+--------+----+----+----+-------------------+------------------+
+|1.0 |48.0    |38.0|8.0 |10.0|0.7916666666666666 |0.8260869565217391|
+|2.0 |46.0    |26.0|10.0|20.0|0.5652173913043478 |0.7222222222222222|
+|3.0 |73.0    |54.0|13.0|19.0|0.7397260273972602 |0.8059701492537313|
+|4.0 |44.0    |36.0|8.0 |8.0 |0.8181818181818182 |0.8181818181818182|
+|5.0 |98.0    |79.0|14.0|19.0|0.8061224489795918 |0.8494623655913979|
+|6.0 |80.0    |49.0|6.0 |31.0|0.6125             |0.8909090909090909|
+|7.0 |85.0    |68.0|15.0|17.0|0.8                |0.8192771084337349|
+|8.0 |21.0    |9.0 |1.0 |12.0|0.42857142857142855|0.9               |
+|9.0 |7.0     |0.0 |1.0 |7.0 |0.0                |0.0               |
+|10.0|67.0    |42.0|3.0 |25.0|0.6268656716417911 |0.9333333333333333|
++----+--------+----+----+----+-------------------+------------------+
+only showing top 10 rows
 
-prediction distribution:
-+----------+-----+
-|prediction|count|
-+----------+-----+
-|       0.0|  884|
-|       1.0| 1639|
-+----------+-----+
-
+total tp: 1046.0
+total fp: 152.0
+total fn: 2986.0
+total recall: 0.2594246031746032
+total precision: 0.8731218697829716
 cluster : 0:Train and Evaluate End
 Start ALS pipeline for cluster: 1
+Count of cluster: 1 is 2412
+Split data into Training and Validation for cluster : 1:
+cluster : 1: training records count: 108556
+cluster : 1: validation records count: 22103
 ...
-AUROC: 0.44571640949720326
-AUPRCs: 0.911441176847512
-tp: 5964
-fp: 1102
-fn: 1055
-recall: 0.8496936885596239
-precision: 0.8440418907444098
-label distribution:
-+-----+-----+
-|label|count|
-+-----+-----+
-|  0.0| 1150|
-|  1.0| 7019|
-+-----+-----+
+best rmse  = 54.34150909598154
+best rank = 50
+positiveDF count: 22103
+validationDF count: 22103
+evaluation by mid: ****************************************************************************************************
++----+--------+-----+----+----+------------------+------------------+
+|mid |posCount|tp   |fp  |fn  |recall            |precision         |
++----+--------+-----+----+----+------------------+------------------+
+|1.0 |272.0   |252.0|52.0|20.0|0.9264705882352942|0.8289473684210527|
+|2.0 |282.0   |266.0|47.0|16.0|0.9432624113475178|0.8498402555910544|
+|3.0 |255.0   |236.0|57.0|19.0|0.9254901960784314|0.8054607508532423|
+|4.0 |206.0   |183.0|29.0|23.0|0.8883495145631068|0.8632075471698113|
+|5.0 |282.0   |270.0|42.0|12.0|0.9574468085106383|0.8653846153846154|
+|6.0 |308.0   |302.0|56.0|6.0 |0.9805194805194806|0.8435754189944135|
+|7.0 |246.0   |227.0|50.0|19.0|0.9227642276422764|0.8194945848375451|
+|8.0 |112.0   |94.0 |11.0|18.0|0.8392857142857143|0.8952380952380953|
+|9.0 |93.0    |59.0 |7.0 |34.0|0.6344086021505376|0.8939393939393939|
+|10.0|177.0   |153.0|26.0|24.0|0.864406779661017 |0.8547486033519553|
++----+--------+-----+----+----+------------------+------------------+
+only showing top 10 rows
 
-prediction distribution:
-+----------+-----+
-|prediction|count|
-+----------+-----+
-|       0.0| 1103|
-|       1.0| 7066|
-+----------+-----+
-
+total tp: 9506.0
+total fp: 1146.0
+total fn: 11382.0
+total recall: 0.4550938337801609
+total precision: 0.8924145700337964
 cluster : 1:Train and Evaluate End
-total time: 301.3676797
+total time: 460.6690918
 
 ```
-## execute the run default script for Keras (with Intel BigDL) 
+## execute the run default script for Keras (with Intel Analytic ZOO + BigDL) 
 ```sh
 root@driver:/home/AaaSDemo# ./run_dl_default.sh
 ```
-## the result of performance metrics from Keras
+## the major milestones and result of performance metrics from Keras
 ```sh
-AUROC: 0.6186825422269961
-AUPRCs: 0.9338356742625373
-tp: 8796
-fp: 1314
-fn: 128
-recall: 0.9856566562079785
-precision: 0.8700296735905044
-label distribution:
-+-----+-----+
-|label|count|
-+-----+-----+
-|  0.0| 1756|
-|  1.0| 8924|
-+-----+-----+
+Set mkl threads to 1 on thread 1
+Engine$:103 - Auto detect executor number and executor cores number
+positive samples count: 67334
+ulimit count: 5178
+mlimit count: 435
+randomNegativeSamples
+combinedDF count: 194177
++---+-----+-----+-----------+-----------------+
+|uid|  mid|label|totalVisits|      totalAmount|
++---+-----+-----+-----------+-----------------+
+|3.0|147.0|  1.0|          5|           2902.0|
+|5.0| 54.0|  1.0|         78|62692.45999999999|
+|5.0| 94.0|  1.0|          8|7548.799999999999|
+|7.0|273.0|  2.0|          0|              0.0|
+|9.0|263.0|  2.0|          0|              0.0|
++---+-----+-----+-----------+-----------------+
+only showing top 5 rows
 
-prediction distribution:
-+----------+-----+
-|prediction|count|
-+----------+-----+
-|       0.0|  570|
-|       1.0|10110|
-+----------+-----+
+Start Deep Learning trainning , training records count: 194177 batchSize is 2000 maxEpoch is 10 learningRate is 0.001 learningRateDecay is 1.0E-7
+Model Summary:
+------------------------------------------------------------------------------------------------------------------------
+Layer (type)                            Output Shape              Param #       Connected to
+========================================================================================================================
+Input275128c7 (Input)                   (None, 2)                 0
+________________________________________________________________________________________________________________________
+Selecte5d8f6cd (Select)                 (None)                    0             Input275128c7
+________________________________________________________________________________________________________________________
+Selectdd0eedb1 (Select)                 (None)                    0             Input275128c7
+________________________________________________________________________________________________________________________
+Flattenbbd63660 (Flatten)               (None, 1)                 0             Selecte5d8f6cd
+________________________________________________________________________________________________________________________
+Flattene6de7263 (Flatten)               (None, 1)                 0             Selectdd0eedb1
+________________________________________________________________________________________________________________________
+Embeddingca6bf738 (Embedding)           (None, 1, 200)            1042800       Flattenbbd63660
+________________________________________________________________________________________________________________________
+Embedding679f4e36 (Embedding)           (None, 1, 100)            43600         Flattene6de7263
+________________________________________________________________________________________________________________________
+Flattenad445ff5 (Flatten)               (None, 100)               0             Embedding679f4e36
+________________________________________________________________________________________________________________________
+Flattendb8cb4c4 (Flatten)               (None, 200)               0             Embeddingca6bf738
+________________________________________________________________________________________________________________________
+Merge5428d273 (Merge)                   (None, 300)               0             Flattendb8cb4c4
+                                                                                Flattenad445ff5
+________________________________________________________________________________________________________________________
+Dense167489b8 (Dense)                   (None, 256)               77056         Merge5428d273
+________________________________________________________________________________________________________________________
+Dense8dbd8fed (Dense)                   (None, 128)               32896         Dense167489b8
+________________________________________________________________________________________________________________________
+Densefef17fbc (Dense)                   (None, 2)                 258           Dense8dbd8fed
+________________________________________________________________________________________________________________________
+Total params: 1,196,610
+Trainable params: 1,196,610
+Non-trainable params: 0
+------------------------------------------------------------------------------------------------------------------------
+INFO  DistriOptimizer$:895 - caching training rdd ...
+INFO  DistriOptimizer$:672 - Cache thread models...
+INFO  DistriOptimizer$:654 - model thread pool size is 1
+INFO  DistriOptimizer$:674 - Cache thread models... done
+INFO  DistriOptimizer$:144 - Count dataset
+INFO  DistriOptimizer$:148 - Count dataset complete. Time elapsed: 0.3187034s
+INFO  DistriOptimizer$:156 - config  {
+        learningRate: 0.001
+        computeThresholdbatchSize: 100
+        maxDropPercentage: 0.0
+        learningRateDecay: 1.0E-7
+        warmupIterationNum: 200
+        isLayerwiseScaled: false
+        dropPercentage: 0.0
+ }
+INFO  DistriOptimizer$:160 - Shuffle data
+INFO  DistriOptimizer$:163 - Shuffle data complete. Takes 0.0131923s
+INFO  DistriOptimizer$:386 - [Epoch 1 2000/194177][Iteration 1][Wall Clock 0.6541267s] Trained 2000 records in 0.6541267 seconds. Throughput is 3057.5117 records/second. Loss is 0.69250727.
+...
+INFO  DistriOptimizer$:430 - [Epoch 10 196000/194177][Iteration 980][Wall Clock 111.2932391s] Epoch finished. Wall clock time is 111351.252 ms
+positive samples count: 8924
+ulimit count: 2824
+mlimit count: 260
+randomNegativeSamples
+combinedDF count: 26398
++------+-----+-----+-----------+-----------+
+|   uid|  mid|label|totalVisits|totalAmount|
++------+-----+-----+-----------+-----------+
+|2559.0| 51.0|  2.0|          0|        0.0|
+|2662.0|132.0|  2.0|          0|        0.0|
+|1693.0| 65.0|  2.0|          0|        0.0|
+|2588.0|  7.0|  2.0|          0|        0.0|
+|1368.0|215.0|  2.0|          0|        0.0|
++------+-----+-----+-----------+-----------+
+only showing top 5 rows
 
-total time: 172.1380214
+positiveDF count: 26398
+validationDF count: 26398
+delete key = a792a896-6b69-42bd-bf7e-06c8c9904c14 4
+evaluation by mid: ****************************************************************************************************
++----+--------+-----+----+----+------------------+------------------+
+|mid |posCount|tp   |fp  |fn  |recall            |precision         |
++----+--------+-----+----+----+------------------+------------------+
+|1.0 |324.0   |314.0|61.0|10.0|0.9691358024691358|0.8373333333333334|
+|2.0 |327.0   |320.0|47.0|7.0 |0.9785932721712538|0.8719346049046321|
+|3.0 |332.0   |326.0|51.0|6.0 |0.9819277108433735|0.8647214854111406|
+|4.0 |244.0   |237.0|43.0|7.0 |0.9713114754098361|0.8464285714285714|
+|5.0 |390.0   |385.0|49.0|5.0 |0.9871794871794872|0.8870967741935484|
+|6.0 |394.0   |387.0|67.0|7.0 |0.9822335025380711|0.8524229074889867|
+|7.0 |348.0   |339.0|51.0|9.0 |0.9741379310344828|0.8692307692307693|
+|8.0 |59.0    |57.0 |18.0|2.0 |0.9661016949152542|0.76              |
+|9.0 |45.0    |38.0 |16.0|7.0 |0.8444444444444444|0.7037037037037037|
+|10.0|214.0   |205.0|56.0|9.0 |0.9579439252336449|0.7854406130268199|
++----+--------+-----+----+----+------------------+------------------+
+only showing top 10 rows
+
+total tp: 8223.0
+total fp: 4808.0
+total fn: 701.0
+total recall: 0.9214477812640072
+total precision: 0.6310336888957102
+saving model to modelFilePath
+saving formatted data to csv
+total time: 209.8500461
 ```
 # Insights 
-I observed with Deep Learning technologies, the whole data mining process reduced lots of workloads and procedure and the deep learning achieved better performance metrics in a shorter time.
-The performance metrics from Spark ML :
+I observed with Deep Learning technologies, the whole data mining process reduced lots of workloads and procedure and the deep learning achieved much better recall performance metric in a shorter time.
+- High recall is more important to most of recommendation business cases. 
+- ALS can get better precision but the recall was worse ,that meaning it assumes most of user-item pairs have low propensity
+- NCF can still improve precision by tuning more combinations of parameter, for this demo because we want to simply and make minimize efforts and time, so we did not use automate hyper-parameters tuning such as grid-search.  
 
-```sh
-AUROC: 0.44571640949720326
-AUPRCs: 0.911441176847512
-tp: 5964
-fp: 1102
-fn: 1055
-recall: 0.8496936885596239
-precision: 0.8440418907444098
-```
-The performance metrics from Spark DL :
-
-```sh
-AUROC: 0.6186825422269961
-AUPRCs: 0.9338356742625373
-tp: 8796
-fp: 1314
-fn: 128
-recall: 0.9856566562079785
-precision: 0.8700296735905044
-```
 # Live Demo
 We are going to start couple services such as Kafka, NiFi, Livy. For benchmark purpose , we don't need those services , but for the AI as a Service demo which cover the lifecyle of a deep learning project , then we need to start them
 ## Build the customized NiFi nar for AaaS demo
