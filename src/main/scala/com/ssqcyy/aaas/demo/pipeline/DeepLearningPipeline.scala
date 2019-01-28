@@ -146,8 +146,6 @@ object DeepLearningPipeline {
       .withColumn("label", label2Binary(col("label")))
       .withColumn("prediction", raw2Classification(col("raw")))
 
-    println("saving evaluate data to local csv")
-    evaluateDF.select("uid", "mid", "label", "prediction").repartition(1).write.format("com.databricks.spark.csv").mode("overwrite").option("header", "true").save(params.dfPath + "DlEvaluateDF")
     Evaluation.evaluateByMid(params.dfPath, "dl", "overwrite", evaluateDF)
 
   }

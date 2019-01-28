@@ -47,7 +47,7 @@ def evaluateByMid(path:String,prefix: String,saveMode: String,evaluateDF: DataFr
 
     println("total recall: " + tpSum.toDouble / (tpSum + fnSum))
     println("total precision: " + tpSum.toDouble / (tpSum + fpSum))
-    byMid.repartition(1).write.format("com.databricks.spark.csv").mode(saveMode).option("header", "true").save(path+prefix+"EvaluationByIdDF")
+    //byMid.repartition(1).write.format("com.databricks.spark.csv").mode(saveMode).option("header", "true").save(path+prefix+"EvaluationByIdDF")
 
   }
 
