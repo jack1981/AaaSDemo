@@ -76,13 +76,14 @@ $ docker run -it ufoym/deepo:keras-py27-cpu bash
 ```sh
 $ cd C:\AaaSDemo\
 $ docker pull ufoym/deepo:all-py27-jupyter-cpu
-$ docker run -it -p 8888:8888  --ipc=host ufoym/deepo:all-py27-jupyter-cpu jupyter notebook --no-browser --ip=[host-ip] --allow-root --NotebookApp.token="demo" --notebook-dir='/root'
+$ docker run -it -p 8888:8888  --ipc=host ufoym/deepo:all-py27-jupyter-cpu jupyter notebook --no-browser --ip=0.0.0.0 --allow-root --NotebookApp.token="demo" --notebook-dir='/root'
 ```
 **Note! don't close window or exit the shell , then the container will be terminated , if you want to quit the container and want to attach it back , you should Ctrl+p then Ctrl+q to leave container safely**
 
 ## Keras python examaple 
 We will go though this Keras python example at Juptyer notebook , you can find it under /Python folder
 - mnist_cnn.py
+- mnist_mlp.py
 
 
 # Create a standalone Keras on Spark environment with python and analytic-zoo lib ready 

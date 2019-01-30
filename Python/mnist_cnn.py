@@ -30,10 +30,11 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 from keras import backend as K
+from keras.callbacks import ModelCheckpoint
 
 batch_size = 128
 num_classes = 10
-epochs = 1
+epochs = 3
 
 # input image dimensions
 img_rows, img_cols = 28, 28
@@ -77,12 +78,16 @@ model.add(Dense(num_classes, activation='softmax'))
 model.compile(loss=keras.losses.categorical_crossentropy,
               optimizer=keras.optimizers.Adadelta(),
               metrics=['accuracy'])
-
+			  
+#train the model
+checkpointer = ModelCheckpoint(filepath='cnn.minsst.model.best.hdf5',verbose=1,save_best_only=True)
 model.fit(x_train, y_train,
           batch_size=batch_size,
           epochs=epochs,
           verbose=1,
-          validation_data=(x_test, y_test))
+          validation_data=(x_test, y_test),callbacks=[checkpointer],shuffle=True)
+# load the weights that yielded the best validation accuracy
+model.load_weights('cnn.minsst.model.best.hdf5')
 score = model.evaluate(x_test, y_test, verbose=0)
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])
