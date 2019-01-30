@@ -20,8 +20,6 @@ csv_path = '/opt/work/data/pcard.csv'
 u_limit = 20000
 m_limit = 200
 sliding_length = 3
-train_start = '201702'
-train_end = '201710'
 neg_rate = 2
 num_features = 3
 u_output = 200
@@ -134,7 +132,10 @@ def getKerasModel():
 
     numEmbeddingOutput = u_output + m_output + num_features - 2
     linear1 = Dense(numEmbeddingOutput // 2)(latent)
-    output = Dense(2)(linear1)
+    x1 = Dropout(0.5)(linear1)
+    linear2 = Dense(2)(x1)
+    x2 = Dropout(0.5)(linear2)
+    output = Dense(2)(x2)
     model = Model(input, output)
     model.summary()
     return model
