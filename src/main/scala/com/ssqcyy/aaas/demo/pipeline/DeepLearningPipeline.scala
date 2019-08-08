@@ -19,6 +19,7 @@ import org.apache.spark.SparkContext
 import org.apache.spark.sql.{ DataFrame, SQLContext }
 import com.intel.analytics.bigdl.convCriterion
 import scala.reflect.api.materializeTypeTag
+import java.io.IOException
 /**
  * @author suqiang.song
  *
@@ -82,7 +83,7 @@ object DeepLearningPipeline {
     val mOutput = params.mOutput
     val learningRate = params.learningRate
     val learningRateDecay = params.learningRateDecay
-    val dataDF = DataPipeline.loadPublicCSV(spark, params)
+    val dataDF = if (params.publicDataSets) DataPipeline.loadPublicCSV(spark, params) else DataPipeline.loadMCCSV(spark, params)
     val ulimit = dataDF.groupBy("uid").count().count().toInt
     val mlimit = dataDF.groupBy("mid").count().count().toInt
     val filterTrainingRawDF = dataDF
@@ -120,10 +121,14 @@ object DeepLearningPipeline {
     val featureValidationDF = DataPipeline.norm(validationDF)
     // # Deep learning model evaluation
     evaluate(dlModel, featureValidationDF, params);
-    println("saving model to modelFilePath")
-    dlModel.model.saveModule(params.modelFilePath + "demo.model", params.modelFilePath + "demo.weight", true)
     println("saving formatted data to csv")
+
     dataDF.select("u", "m", "uid", "mid").distinct().filter(!$"m".contains(",")).limit(200).repartition(1).write.format("com.databricks.spark.csv").mode("overwrite").option("header", "true").save(params.dfPath + "umPairDF")
+    println("saving model to modelFilePath")
+    scala.util.control.Exception.ignoring(classOf[IOException]) {
+      dlModel.model.saveModule(params.modelFilePath + "demo.model", params.modelFilePath + "demo.weight", true)
+    }
+
     println("total time: " + (System.nanoTime() - st) / 1e9)
   }
 

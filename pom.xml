@@ -78,8 +78,9 @@
 		<scala.version>2.11.12</scala.version>
 		<scala.macros.version>2.10</scala.macros.version>
 		<scalatest.version>2.2.4</scalatest.version>
-		<spark.version>2.3.2</spark.version>
-		<spark.major.version>2.3</spark.major.version>
+		<spark.version>2.4.1</spark.version>
+		<spark.major.version>2.4</spark.major.version>
+		<nifi-version>1.8.0</nifi-version>
 		<spark-scope>compile</spark-scope>
 		<encoding>UTF-8</encoding>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -138,7 +139,7 @@
 			<artifactId>spark-sql_${scala.major.version}</artifactId>
 			<version>${spark.version}</version>
 		</dependency>
-		
+
 		<!--for streaming -->
 		<dependency>
 			<groupId>org.apache.spark</groupId>
@@ -150,6 +151,25 @@
 			<artifactId>kafka_2.11</artifactId>
 			<version>0.10.1.1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-streaming_2.12</artifactId>
+			<version>${spark.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!--for nifi streaming -->
+		<dependency>
+			<groupId>org.apache.nifi</groupId>
+			<artifactId>nifi-site-to-site-client</artifactId>
+			<version>${nifi-version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.nifi</groupId>
+			<artifactId>nifi-spark-receiver</artifactId>
+			<version>${nifi-version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.apache.spark</groupId>
@@ -159,8 +179,8 @@
 		</dependency>
 		<dependency>
 			<groupId>com.intel.analytics.zoo</groupId>
-			<artifactId>analytics-zoo-bigdl_0.6.0-spark_2.2.0</artifactId>
-			<version>0.3.0</version>
+			<artifactId>analytics-zoo-bigdl_0.7.2-spark_2.4.0</artifactId>
+			<version>0.4.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.databricks</groupId>

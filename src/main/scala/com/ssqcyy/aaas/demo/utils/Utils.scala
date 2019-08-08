@@ -25,6 +25,7 @@ object Utils {
     bregParam:         Double            = 0.20,
     alpha:             Double            = 0.01,
     balpha:            Double            = 0.15,
+    publicDataSets:    Boolean           = true,
     debug:             Boolean           = true,
     saveModel:         Boolean           = true,
     randomSampling:    Boolean           = true,
@@ -32,11 +33,12 @@ object Utils {
     dataFilePath:      String            = "/opt/work/data/pcard.csv",
     modelFilePath:     String            = "/opt/work/",
     offerFilePath:     String            = "/opt/work/data/offerList.csv",
-    dfPath:        String            = "/opt/work/df/",
+    dfPath:            String            = "/opt/work/df/",
     kafkaStreamParams: KafkaStreamParams = KafkaStreamParams("localhost:9092", "StreamingRaw", "localhost:9092", "StreamingResult", "/opt/work/", 5),
+    niFiStreamParams:  NiFiStreamParams =  NiFiStreamParams(false, "localhost", "9097", 5),
     clusterParams:     ClusterParams     = ClusterParams(2, 30))
 
-  val trainParser = new OptionParser[AppParams]("Spark ML DL Benchmark Project") {
+  val trainParser = new OptionParser[AppParams]("AaaS Demo Project") {
     head("AppParams:")
     opt[Int]("batchSize")
       .text("batch size for deep learning")
@@ -89,6 +91,9 @@ object Utils {
     opt[Boolean]("debug")
       .text("turn on debug mode or not")
       .action((x, c) => c.copy(debug = x))
+    opt[Boolean]("publicDataSets")
+      .text("Use public dataset or not")
+      .action((x, c) => c.copy(publicDataSets = x))
     opt[Boolean]("randomSampling")
       .text("force to use random Sampling")
       .action((x, c) => c.copy(randomSampling = x))
@@ -114,6 +119,13 @@ object Utils {
         val p = KafkaStreamParams(pArr(0).trim, pArr(1).trim, pArr(2).trim, pArr(3).trim, pArr(4).trim, pArr(5).toLong)
         c.copy(kafkaStreamParams = p)
       })
+      opt[String]("niFiStreamParams")
+      .text("niFiStreamParams")
+      .action((x, c) => {
+        val pArr = x.split(seperator).map(_.trim)
+        val p = NiFiStreamParams(pArr(0).toBoolean, pArr(1).trim,pArr(2).trim,pArr(5).toLong)
+        c.copy(niFiStreamParams = p)
+      })
     opt[String]("clusterParams")
       .text("ClusterParams")
       .action((x, c) => {
@@ -125,6 +137,12 @@ object Utils {
   case class ClusterParams(
     numClusters:   Int,
     numIterations: Int)
+
+  case class NiFiStreamParams(
+    enable:  Boolean = false,
+    url:            String = "",
+    portName: String = "",
+    seconds:              Long   = 5)
 
   case class KafkaStreamParams(
     inputBootstrapServer:  String = "",

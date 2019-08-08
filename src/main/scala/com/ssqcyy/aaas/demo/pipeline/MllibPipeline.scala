@@ -67,7 +67,7 @@ object MllibPipeline {
     import spark.implicits._
 
     // #load the data source and fix the data quality issues
-    val dataDF = DataPipeline.loadPublicCSV(spark.sqlContext, params)
+    val dataDF = if(params.publicDataSets) DataPipeline.loadPublicCSV(spark.sqlContext, params) else DataPipeline.loadMCCSV(spark.sqlContext, params)
     val filterTrainingRawDF = dataDF
       .filter(s"date>=$trainingStart")
       .filter(s"date<=$trainingEnd")

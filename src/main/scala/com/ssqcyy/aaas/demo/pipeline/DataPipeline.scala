@@ -15,7 +15,6 @@ import org.apache.spark.sql.types.{ ArrayType, DoubleType, FloatType }
 import org.apache.spark.sql.{ DataFrame, SparkSession }
 import org.apache.hadoop.fs.Path
 import com.ssqcyy.aaas.demo.utils.Utils.AppParams
-
 import scala.util.Random
 /**
  * @author suqiang song(Jack)
@@ -81,18 +80,71 @@ object DataPipeline {
     createMDF(spark, params, transDF)
     transDF
   }
+  /**
+   * @return DataFrame ("uid", "mid", "date")
+   */
+  def loadMCCSV(spark: SQLContext, params: AppParams): DataFrame = {
+
+    val raw = spark.read
+      .format("csv")
+      .option("header", "true") //reading the headers
+      .option("mode", "DROPMALFORMED")
+      .csv(params.dataFilePath)
+      .dropDuplicates()
+      .na.fill(0)
+
+    val dataDF = raw.select("external_userid", "txn_timestamp", "amount", "merchant")
+      .select(
+        col("external_userid").as("u"),
+        col("amount").cast(DoubleType),
+        col("merchant").as("m"),
+        col("txn_timestamp"))
+
+    val df: SimpleDateFormat = new SimpleDateFormat("MM/dd/yyyy")
+    // use timestamp type
+    val toDate = udf { ts: String =>
+      val lts = if (ts.size == 10) ts.toLong * 1000L else if (ts.size == 13) ts.toLong
+      val date: String = df.format(lts)
+      val splits = date.split("/")
+      val year = splits(2).toInt
+      val month = splits(0).toInt
+      val day = splits(1).toInt
+      year * 10000 + month * 100 + day
+    }
+    val dates = dataDF.withColumn("date", toDate(col("txn_timestamp"))).drop("txn_timestamp")
+    val simpleDF = dates.select("u", "amount", "m", "date")
+
+    val si1 = new StringIndexer().setInputCol("u").setOutputCol("uid").setHandleInvalid("skip")
+    val si2 = new StringIndexer().setInputCol("m").setOutputCol("mid").setHandleInvalid("skip")
+
+    val pipeline = new Pipeline().setStages(Array(si1, si2))
+    val pipelineModel = pipeline.fit(simpleDF)
+
+    val transDF = pipelineModel.transform(simpleDF)
+      .select("u", "uid", "m", "mid", "amount", "date")
+      .withColumn("uid", col("uid") + 1)
+      .withColumn("mid", col("mid") + 1)
+      .select("u", "uid", "m", "mid", "amount", "date")
+    // save userDF
+    createUDF(spark, params, transDF)
+    // save itemDF
+    createMDF(spark, params, transDF)
+    transDF
+  }
 
   def getStreamingRawDF(spark: SparkSession, params: AppParams): DataFrame = {
-    val df_stream = spark
-      .readStream
-      .format("kafka")
-      .option("kafka.bootstrap.servers", params.kafkaStreamParams.inputBootstrapServer)
-      .option("startingOffsets", "latest")
-      .option("subscribe", params.kafkaStreamParams.inputTopic)
-      .option("failOnDataLoss", "false")
-      .load()
+
+    val df_stream =
+      spark.readStream
+        .format("kafka")
+        .option("kafka.bootstrap.servers", params.kafkaStreamParams.inputBootstrapServer)
+        .option("startingOffsets", "latest")
+        .option("subscribe", params.kafkaStreamParams.inputTopic)
+        .option("failOnDataLoss", "false")
+        .load()
     df_stream
   }
+
 
   def mixNegativeAndCombineFeatures(
     tDF: DataFrame, rawDF: DataFrame,
@@ -264,8 +316,9 @@ object DataPipeline {
 
   def createUDF(spark: SQLContext, params: AppParams, sourceDF: DataFrame): DataFrame = {
 
-    val uDF = sourceDF.select("uid", "u").distinct()
-    uDF.repartition(1).write.mode(SaveMode.Overwrite).parquet(new Path(params.dfPath, "uDF").toString)
+    val uDF = sourceDF.select("uid", "u").distinct().repartition(1)
+    uDF.write.mode(SaveMode.Overwrite).parquet(new Path(params.dfPath, "uDF").toString)
+    uDF.write.format("com.databricks.spark.csv").mode("overwrite").option("header", "true").save(params.dfPath + "uDFCsv")
     uDF
   }
 
@@ -276,8 +329,9 @@ object DataPipeline {
 
   def createMDF(spark: SQLContext, params: AppParams, sourceDF: DataFrame): DataFrame = {
 
-    val mDF = sourceDF.select("mid", "m").distinct()
-    mDF.repartition(1).write.mode(SaveMode.Overwrite).parquet(new Path(params.dfPath, "mDF").toString)
+    val mDF = sourceDF.select("mid", "m").distinct().repartition(1)
+    mDF.write.mode(SaveMode.Overwrite).parquet(new Path(params.dfPath, "mDF").toString)
+    mDF.write.format("com.databricks.spark.csv").mode("overwrite").option("header", "true").save(params.dfPath + "mDFCsv")
     mDF
   }
 
