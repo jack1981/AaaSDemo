@@ -179,8 +179,8 @@
 		</dependency>
 		<dependency>
 			<groupId>com.intel.analytics.zoo</groupId>
-			<artifactId>analytics-zoo-bigdl_0.7.2-spark_2.4.0</artifactId>
-			<version>0.4.0</version>
+			<artifactId>analytics-zoo-bigdl_0.6.0-spark_2.2.0</artifactId>
+			<version>0.3.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.databricks</groupId>
