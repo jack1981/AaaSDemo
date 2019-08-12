@@ -1,0 +1,138 @@
+FROM ubuntu:16.04
+WORKDIR /opt/work
+
+ARG ANALYTICS_ZOO_VERSION=0.4.0-SNAPSHOT
+ARG BIGDL_VERSION=0.6.0
+ARG SPARK_VERSION=2.3.2
+ARG ZOO_SPARK_VERSION=2.3.1
+ARG RUNTIME_DRIVER_CORES=1
+ARG RUNTIME_DRIVER_MEMORY=2g
+ARG RUNTIME_EXECUTOR_CORES=1
+ARG RUNTIME_EXECUTOR_MEMORY=4g
+ARG RUNTIME_TOTAL_EXECUTOR_CORES=1
+ENV ANALYTICS_ZOO_VERSION_ENV           ${ANALYTICS_ZOO_VERSION}
+ENV SPARK_VERSION_ENV                   ${SPARK_VERSION}
+ENV ZOO_SPARK_VERSION_ENV               ${ZOO_SPARK_VERSION}
+ENV BIGDL_VERSION_ENV                   ${BIGDL_VERSION}
+ENV RUNTIME_DRIVER_CORES_ENV            ${RUNTIME_DRIVER_CORES}
+ENV RUNTIME_DRIVER_MEMORY_ENV           ${RUNTIME_DRIVER_MEMORY}
+ENV RUNTIME_EXECUTOR_CORES_ENV          ${RUNTIME_EXECUTOR_CORES}
+ENV RUNTIME_EXECUTOR_MEMORY_ENV         ${RUNTIME_EXECUTOR_MEMORY}
+ENV RUNTIME_TOTAL_EXECUTOR_CORES_ENV    ${RUNTIME_TOTAL_EXECUTOR_CORES}
+ENV SPARK_HOME                          /opt/work/spark-${SPARK_VERSION}
+ENV ANALYTICS_ZOO_HOME                  /opt/work/analytics-zoo-${ANALYTICS_ZOO_VERSION}
+ENV JAVA_HOME                           /opt/jdk
+ENV PATH                                ${JAVA_HOME}/bin:${PATH}
+
+RUN apt-get update && \
+    apt-get install -y --force-yes apt-transport-https vim curl software-properties-common nano wget unzip maven git
+#java
+RUN wget https://build.funtoo.org/distfiles/oracle-java/jdk-8u152-linux-x64.tar.gz && \
+    gunzip jdk-8u152-linux-x64.tar.gz && \
+    tar -xf jdk-8u152-linux-x64.tar -C /opt && \
+    rm jdk-8u152-linux-x64.tar && \
+    ln -s /opt/jdk1.8.0_152 /opt/jdk
+#python
+RUN apt-get install -y --force-yes software-properties-common python-software-properties python-pkg-resources && \
+    add-apt-repository -y ppa:jonathonf/python-2.7 && \
+    apt-get update && \
+    apt-get install -y --force-yes build-essential python python-setuptools python-dev && \
+    wget https://bootstrap.pypa.io/get-pip.py && \
+    python2 get-pip.py && \
+    pip2 install --upgrade setuptools && \
+    pip2 install numpy scipy && \
+    pip2 install --no-binary pandas -I pandas && \
+    pip2 install scikit-learn matplotlib seaborn jupyter wordcloud moviepy requests h5py opencv-python tensorflow && \
+    python2 -m pip install ipykernel && \
+    python2 -m ipykernel install --user
+
+#spark
+RUN wget https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop2.7.tgz && \
+    tar -zxvf spark-${SPARK_VERSION}-bin-hadoop2.7.tgz && \
+    mv spark-${SPARK_VERSION}-bin-hadoop2.7 spark-${SPARK_VERSION} && \
+    rm spark-${SPARK_VERSION}-bin-hadoop2.7.tgz
+ENV PATH $PATH:${SPARK_HOME}/bin
+# analytic-zoo
+ADD ./download-analytics-zoo.sh /opt/work
+ADD ./start-notebook.sh /opt/work
+RUN chmod a+x download-analytics-zoo.sh && \
+    chmod a+x start-notebook.sh
+RUN ./download-analytics-zoo.sh
+
+#nifi
+ARG UID=1000
+ARG GID=1000
+ARG NIFI_VERSION=1.8.0
+ARG BASE_URL=https://archive.apache.org/dist
+ARG MIRROR_BASE_URL=${MIRROR_BASE_URL:-${BASE_URL}}
+ARG NIFI_BINARY_PATH=${NIFI_BINARY_PATH:-/nifi/${NIFI_VERSION}/nifi-${NIFI_VERSION}-bin.zip}
+ARG NIFI_TOOLKIT_BINARY_PATH=${NIFI_TOOLKIT_BINARY_PATH:-/nifi/${NIFI_VERSION}/nifi-toolkit-${NIFI_VERSION}-bin.zip}
+
+ENV NIFI_BASE_DIR=/opt/nifi
+ENV NIFI_HOME ${NIFI_BASE_DIR}/nifi-current
+ENV NIFI_TOOLKIT_HOME ${NIFI_BASE_DIR}/nifi-toolkit-current
+
+ENV NIFI_PID_DIR=${NIFI_HOME}/run
+ENV NIFI_LOG_DIR=${NIFI_HOME}/logs
+
+
+# Setup NiFi user and create necessary directories
+RUN groupadd -g ${GID} nifi || groupmod -n nifi `getent group ${GID} | cut -d: -f1` \
+    && useradd --shell /bin/bash -u ${UID} -g ${GID} -m nifi \
+    && mkdir -p ${NIFI_BASE_DIR} \
+    && chown -R nifi:nifi ${NIFI_BASE_DIR} \
+    && apt-get update \
+    && apt-get install -y jq xmlstarlet procps
+
+USER nifi
+# Download, validate, and expand Apache NiFi Toolkit binary.
+RUN curl -fSL ${MIRROR_BASE_URL}/${NIFI_TOOLKIT_BINARY_PATH} -o ${NIFI_BASE_DIR}/nifi-toolkit-${NIFI_VERSION}-bin.zip \
+    && echo "$(curl ${BASE_URL}/${NIFI_TOOLKIT_BINARY_PATH}.sha256) *${NIFI_BASE_DIR}/nifi-toolkit-${NIFI_VERSION}-bin.zip" | sha256sum -c - \
+    && unzip ${NIFI_BASE_DIR}/nifi-toolkit-${NIFI_VERSION}-bin.zip -d ${NIFI_BASE_DIR} \
+    && rm ${NIFI_BASE_DIR}/nifi-toolkit-${NIFI_VERSION}-bin.zip \
+    && mv ${NIFI_BASE_DIR}/nifi-toolkit-${NIFI_VERSION} ${NIFI_TOOLKIT_HOME} \
+    && ln -s ${NIFI_TOOLKIT_HOME} ${NIFI_BASE_DIR}/nifi-toolkit-${NIFI_VERSION}
+
+# Download, validate, and expand Apache NiFi binary.
+RUN curl -fSL ${MIRROR_BASE_URL}/${NIFI_BINARY_PATH} -o ${NIFI_BASE_DIR}/nifi-${NIFI_VERSION}-bin.zip \
+    && echo "$(curl ${BASE_URL}/${NIFI_BINARY_PATH}.sha256) *${NIFI_BASE_DIR}/nifi-${NIFI_VERSION}-bin.zip" | sha256sum -c - \
+    && unzip ${NIFI_BASE_DIR}/nifi-${NIFI_VERSION}-bin.zip -d ${NIFI_BASE_DIR} \
+    && rm ${NIFI_BASE_DIR}/nifi-${NIFI_VERSION}-bin.zip \
+    && mv ${NIFI_BASE_DIR}/nifi-${NIFI_VERSION} ${NIFI_HOME} \
+    && mkdir -p ${NIFI_HOME}/conf \
+    && mkdir -p ${NIFI_HOME}/database_repository \
+    && mkdir -p ${NIFI_HOME}/flowfile_repository \
+    && mkdir -p ${NIFI_HOME}/content_repository \
+    && mkdir -p ${NIFI_HOME}/provenance_repository \
+    && mkdir -p ${NIFI_HOME}/state \
+    && mkdir -p ${NIFI_LOG_DIR} \
+    && ln -s ${NIFI_HOME} ${NIFI_BASE_DIR}/nifi-${NIFI_VERSION}
+
+VOLUME ${NIFI_LOG_DIR} \
+       ${NIFI_HOME}/conf \
+       ${NIFI_HOME}/database_repository \
+       ${NIFI_HOME}/flowfile_repository \
+       ${NIFI_HOME}/content_repository \
+       ${NIFI_HOME}/provenance_repository \
+       ${NIFI_HOME}/state
+
+
+# Clear nifi-env.sh in favour of configuring all environment variables in the Dockerfile
+RUN echo "#!/bin/sh\n" > $NIFI_HOME/bin/nifi-env.sh
+
+# Livy
+USER root
+
+ENV LIVY_VERSION=0.5.0-incubating \
+    LIVY_HOME=/opt/distribute/livy-bin
+# install livy
+RUN curl -O -L http://archive.apache.org/dist/incubator/livy/${LIVY_VERSION}/livy-${LIVY_VERSION}-bin.zip && \
+    unzip livy-${LIVY_VERSION}-bin.zip -d /opt/distribute && \
+    rm -f livy-${LIVY_VERSION}-bin.zip && \
+    mv /opt/distribute/livy-${LIVY_VERSION}-bin ${LIVY_HOME} && \
+    mkdir ${LIVY_HOME}/logs
+COPY livy.conf ${LIVY_HOME}/conf/
+
+# Web HTTP(s)
+EXPOSE 8080 8443 10000 8998 12345 8088 4040 7077
+
