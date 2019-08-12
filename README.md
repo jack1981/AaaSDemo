@@ -164,17 +164,6 @@ Ethernet adapter vEthernet (DockerNAT):
 ```sh
 root@demo:/opt/work# export hostIP=10.0.75.1
 ```
-
-## start and verify notebook
-```sh
-root@demo:/opt/work# nohup /opt/work/start-notebook.sh >/dev/null 2>&1 & 
-```
-- You can view the notebook on http://${hostIP}:12345  the token is "demo"
-
-## Keras on Spark examaple
-At Module 2 and Code Lab 1, We will go though this Keras on spark example , you can find it under /Python folder
-- keras_ncf_zoo.py
-
 # Build the benchmark artifacts
 This is for Module 4 and codelab 2
 Git clone the current project to download artifacts , build and run
@@ -209,6 +198,18 @@ root@demo:/home/AaaSDemo# cp jars/*.jar .
 root@demo:/home/AaaSDemo# cp scripts/*.sh .
 root@demo:/home/AaaSDemo# chmod 777 *
 ```
+
+## start and verify notebook
+```sh
+root@demo:/opt/work# nohup /opt/work/start-notebook.sh >/dev/null 2>&1 & 
+```
+- You can view the notebook on http://${hostIP}:12345  the token is "demo"
+
+## Keras on Spark examaple
+At Module 2 and Code Lab 1, We will go though this Keras on spark example , you can find it under /Python folder
+- keras_ncf_zoo.py
+
+
 
 # Run the project and check the results
 ## explain the parameters 

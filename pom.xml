@@ -158,18 +158,6 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!--for nifi streaming -->
-		<dependency>
-			<groupId>org.apache.nifi</groupId>
-			<artifactId>nifi-site-to-site-client</artifactId>
-			<version>${nifi-version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.nifi</groupId>
-			<artifactId>nifi-spark-receiver</artifactId>
-			<version>${nifi-version}</version>
-		</dependency>
 
 		<dependency>
 			<groupId>org.apache.spark</groupId>

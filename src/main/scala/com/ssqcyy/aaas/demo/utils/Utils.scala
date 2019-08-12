@@ -35,7 +35,6 @@ object Utils {
     offerFilePath:     String            = "/opt/work/data/offerList.csv",
     dfPath:            String            = "/opt/work/df/",
     kafkaStreamParams: KafkaStreamParams = KafkaStreamParams("localhost:9092", "StreamingRaw", "localhost:9092", "StreamingResult", "/opt/work/", 5),
-    niFiStreamParams:  NiFiStreamParams =  NiFiStreamParams(false, "localhost", "9097", 5),
     clusterParams:     ClusterParams     = ClusterParams(2, 30))
 
   val trainParser = new OptionParser[AppParams]("AaaS Demo Project") {
@@ -119,13 +118,6 @@ object Utils {
         val p = KafkaStreamParams(pArr(0).trim, pArr(1).trim, pArr(2).trim, pArr(3).trim, pArr(4).trim, pArr(5).toLong)
         c.copy(kafkaStreamParams = p)
       })
-      opt[String]("niFiStreamParams")
-      .text("niFiStreamParams")
-      .action((x, c) => {
-        val pArr = x.split(seperator).map(_.trim)
-        val p = NiFiStreamParams(pArr(0).toBoolean, pArr(1).trim,pArr(2).trim,pArr(5).toLong)
-        c.copy(niFiStreamParams = p)
-      })
     opt[String]("clusterParams")
       .text("ClusterParams")
       .action((x, c) => {
@@ -137,12 +129,6 @@ object Utils {
   case class ClusterParams(
     numClusters:   Int,
     numIterations: Int)
-
-  case class NiFiStreamParams(
-    enable:  Boolean = false,
-    url:            String = "",
-    portName: String = "",
-    seconds:              Long   = 5)
 
   case class KafkaStreamParams(
     inputBootstrapServer:  String = "",
