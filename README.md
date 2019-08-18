@@ -111,7 +111,7 @@ Module 2 and Code Lab 1 require another standalone spark/python environment to r
 ```sh
 $ cd C:\AaaSDemo
 $ Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$ Invoke-WebRequest "https://github.com/jack1981/AaaSDemo/raw/master/docker/images.zip" -OutFile "C:\Docker\images.zip" -UseBasicParsing
+$ Invoke-WebRequest "https://github.com/jack1981/AaaSDemo/raw/master/docker/images.zip" -OutFile "C:\AaaSDemo\images.zip" -UseBasicParsing
 $ unzip images.zip
 ```
 - If you are running docker at Linux 
